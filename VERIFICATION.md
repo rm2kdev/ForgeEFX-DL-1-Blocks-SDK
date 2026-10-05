@@ -50,6 +50,11 @@ and existing development guide. A prose-length check found no non-table prose
 lines over 25 whitespace-separated words; this is not a full STE language audit.
 `git diff --check` passed.
 
+Merged the guide in `.worktrees/getting-started-integration` and repeated the
+root configure, build, and CTest commands above in a fresh build directory.
+The integration build succeeded and **11/11 tests passed**. The integration
+diff check also passed.
+
 ### Listening, Windows host, macOS host and DAW checks
 
 Not run for this documentation change. No Mac compilation, Visual Studio
