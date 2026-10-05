@@ -12,6 +12,7 @@ Windows x64, MSVC 19.51, CMake/Ninja, Release, Python 3.12:
 - `ctest --test-dir build/native -C Release --output-on-failure`: **4/4 passed**.
   These cover the actual compiled example module, gain behavior, four Python
   metadata/callback tests, and five Mac architecture-selection cases.
+  A fresh build in the integration worktree also passed all four CTest checks.
 - Copied only `sdk/` and `examples/gain/` into a separate directory containing
   spaces, with the effect folder named `my-effect`. Configured and built the
   copied effect using only `FORGEEFX_SDK_DIR` to find the copied SDK.
