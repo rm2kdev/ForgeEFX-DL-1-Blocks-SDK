@@ -4,6 +4,8 @@ Visit [www.forgeefx.com](https://www.forgeefx.com/) for ForgeEFX product informa
 
 ## Build your first effect
 
+For a step-by-step introduction, read [Getting Started](../Getting%20Started.md).
+
 Copy `examples/gain` from the SDK release into your own project. Give it a stable
 namespaced ID such as `yourcompany.youreffect`, and set the `DEVELOPER` CMake
 argument to your developer ID. Unnamespaced official catalog IDs are reserved.
