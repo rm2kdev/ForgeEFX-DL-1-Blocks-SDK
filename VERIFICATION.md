@@ -114,6 +114,10 @@ checks. Integration reused the canonical SDK path setup already added by the
 responsive UI demo. `git diff --check` passed. No SDK implementation changes
 were needed.
 
+The minimal phaser demo subsequently landed on `main`; merged it into the same
+integration worktree, preserved both examples and verification histories, and
+reran root configure/build/CTest: **11/11 passed**.
+
 Inspected generated package metadata and descriptor: `yourcompany.delay`,
 developer `yourcompany`, version `1.0.0`, host range `[0.1.0, 0.2.0)`, ABI v1,
 48 kHz, 48,001 state words per channel, three parameters, legacy index -1,
@@ -144,6 +148,59 @@ No listening, DAW loading, preset round-trip, DAW automation, Mac compilation,
 Mac execution or signing/notarization was performed. Delay-time changes are
 intentionally unsmoothed and can click. Host screenshots establish editor
 appearance only, not audio routing or audio quality.
+
+## Minimal phaser demo - 5 October 2026
+
+### Automated checks
+
+Windows x64, MSVC 19.51, CMake 4.4.3/Ninja, Python 3.12.14. Commands run
+in `.worktrees/phaser-builder` with external compiler/Windows SDK tools on
+the environment path and local CMake tool-selection options:
+
+```sh
+cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/native --config Release --parallel
+ctest --test-dir build/native -C Release --output-on-failure
+cmake -S examples/phaser -B build/phaser -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/phaser --config Release --parallel
+./build/native/sdk/forgeefx_block_validator.exe ./build/phaser/dist/yourcompany.phaser.fxblock/bin/windows-x64/block.dll
+```
+
+- Root build succeeded; **6/6 CTest checks passed**. Phaser DSP checks include
+  silence at rate/depth extremes through complete LFO cycles, impulse decay,
+  deterministic reset, full-scale output bounds under rapid parameter changes,
+  overload input, independent instances/channels, a cancellation notch near
+  903 Hz at zero depth, and changed sweep behavior at different rates.
+- Standalone build succeeded. Actual DLL passed ABI, metadata, independent
+  state, reset, parameter extremes and render-service validation.
+- Repeated the root configure/build/CTest commands in a fresh integration
+  worktree alongside the responsive UI example: **9/9 tests passed**.
+- Generated package inspected: `yourcompany.phaser`, developer `yourcompany`,
+  package `1.0.0`, host bounds `[0.1.0, 0.2.0)`, five state words per channel,
+  two parameters, 48 kHz and a Windows x64 DLL. Legacy index defaults to -1.
+  This placeholder package remains an unpublished prototype, not a release.
+- Initial configuration failed due to a local Windows SDK library path; corrected
+  the build environment. The combined Ninja build then exposed duplicate SDK
+  path spellings; the root now supplies one canonical SDK path to its examples.
+  SDK internals are unchanged.
+
+### Windows host and artwork checks
+
+Launched the existing Windows host in a separate process pointing at the
+standalone package directory. Inspected its initial screen, but desktop input
+failed with stale screenshot IDs and `coordinate input geometry is unavailable`
+before navigating to the phaser. Closed only this test process. Phaser loading,
+editor appearance, extremes and bypass remain **unverified in the host**.
+The validator's drawing stubs establish callback execution, not appearance.
+Independent source review found no material issues in the editor layout or
+render lifecycle; this is not a visual approval of the unobserved editor.
+
+### Listening, macOS and DAW checks
+
+No listening, macOS build/runtime, DAW, preset round-trip or automation quality
+checks were performed. The phaser has no parameter smoothing; abrupt automation
+is bounded by saturation but may click. Mac platform-selection tests run on
+Windows and do not establish Mac binary or host compatibility.
 
 ## Public SDK export - 5 October 2026
 

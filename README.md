@@ -1,6 +1,6 @@
 # ForgeEFX DL-1 Blocks SDK
 
-SDK 1.0.0 with gain, delay and responsive UI examples for building external ForgeEFX DL-1 blocks.
+SDK 1.0.0 with example effects and custom editors for building external ForgeEFX DL-1 blocks.
 Includes the ABI headers, drawing-service bridge, CMake package generator,
 compiled-module validator and working examples. No host checkout, JUCE,
 firmware, effect catalog or model downloads are needed.
