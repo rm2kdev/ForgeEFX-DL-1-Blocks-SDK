@@ -11,6 +11,24 @@ Start with [Development Guide.md](Development%20Guide.md). Coding agents should
 also read [AGENTS.md](AGENTS.md). The lower-level contract is in
 [sdk/README.md](sdk/README.md) and [forgeefx_block.h](sdk/include/forgeefx_block.h).
 
+## Examples in DL-1
+
+The bundled examples loaded in the Windows DL-1 standalone host, shown at
+their default parameter values.
+
+**[Delay](examples/delay)** — a custom editor with Time, Feedback and Mix controls.
+
+![SDK Delay running in DL-1 with Time at 300 ms, Feedback at 30% and Mix at 30%](docs/screenshots/sdk-delay.png)
+
+**[Phaser](examples/phaser/README.md)** — a minimal two-control modulation effect.
+
+![SDK Phaser running in DL-1 with Rate at 0.5 Hz and Depth at 75%](docs/screenshots/sdk-phaser.png)
+
+**[Responsive UI](examples/responsive_ui/README.md)** — gain feedback and an output
+waveform display, shown here at 100% gain with no input signal.
+
+![SDK UI Demo running in DL-1 with a gain knob, flat output trace and host parameter control](docs/screenshots/sdk-responsive-ui.png)
+
 ## Quick start
 
 Install CMake 3.22+, Python 3.10+, and a C11/C++20 compiler. On Windows use an
