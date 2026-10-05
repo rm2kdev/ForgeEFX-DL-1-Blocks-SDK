@@ -5,6 +5,8 @@ Includes the ABI headers, drawing-service bridge, CMake package generator,
 compiled-module validator and a working example. No host checkout, JUCE,
 firmware, effect catalog or model downloads are needed.
 
+Visit [www.forgeefx.com](https://www.forgeefx.com/) for ForgeEFX product information.
+
 Start with [Development Guide.md](Development%20Guide.md). Coding agents should
 also read [AGENTS.md](AGENTS.md). The lower-level contract is in
 [sdk/README.md](sdk/README.md) and [forgeefx_block.h](sdk/include/forgeefx_block.h).
@@ -27,11 +29,9 @@ The example package is `build/native/dist/yourcompany.youreffect.fxblock/`.
 Its `yourcompany.youreffect` effect ID and `yourcompany` developer ID are valid,
 buildable placeholders. Replace both before distributing your own block.
 
-Copy the entire package folder into a Blocks location scanned by the full DL-1
+Copy the entire package folder into a Blocks location scanned by the DL-1
 host, then restart the host. Windows packages contain an x64 DLL; macOS packages
 contain a dylib for the selected architecture. Build on each target platform.
-Trial access belongs to the host's compiled ID allowlist; the example has no
-default trial approval.
 
 See [VERIFICATION.md](VERIFICATION.md) for tested platforms and outstanding
 listening/host checks, and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for

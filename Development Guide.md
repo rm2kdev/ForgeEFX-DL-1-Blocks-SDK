@@ -1,8 +1,10 @@
 # Developing blocks for ForgeEFX DL-1
 
 This guide takes you from the bundled gain template to a standalone `.fxblock`
-package. SDK 1.0.0 exposes ABI v1. The full DL-1 host loads compatible external
+package. SDK 1.0.0 exposes ABI v1. The DL-1 host loads compatible external
 blocks; the SDK does not include the host application.
+
+Visit [www.forgeefx.com](https://www.forgeefx.com/) for ForgeEFX product information.
 
 ## 1. Install the build tools
 
@@ -163,9 +165,7 @@ The generated package `manifest.json` and compiled descriptor come from the
 same source metadata. Never hand-edit either generated file. Reconfigure/rebuild
 after editing the source manifest. Keep package and binary together.
 
-Host-version compatibility, SDK ABI version, package version, and trial approval
-are separate. Trial eligibility belongs to the host's compiled JSON ID allowlist.
-A manifest cannot grant trial access; the SDK template is not approved by default.
+Host-version compatibility, SDK ABI version, and package version are separate.
 
 ## 7. Add an optional editor
 
@@ -251,5 +251,5 @@ Close DL-1 and any DAW hosting it before replacing a loaded library. Copy the
 complete package into a Blocks directory scanned by your host installation and
 restart the host. A missing block commonly means an unscanned directory, a nested
 or incomplete package, an architecture mismatch, an incompatible host range,
-a duplicate ID, or a trial ID that is not approved. Verify those against the
-actual generated metadata and host configuration before changing DSP code.
+or a duplicate ID. Verify those against the actual generated metadata and host
+configuration before changing DSP code.

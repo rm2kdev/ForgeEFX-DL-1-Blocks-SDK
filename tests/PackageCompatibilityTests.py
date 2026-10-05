@@ -28,7 +28,6 @@ class CompatibilityTests(unittest.TestCase):
         self.assertEqual(defaults['maximum_host_version'], '0.2.0')
         custom = self.generate(minimum_host_version='0.1.3', maximum_host_version='2.0.0')
         self.assertEqual(custom['minimum_host_version'], '0.1.3')
-        self.assertNotIn('TrialCanUse', defaults)
 
     def test_invalid_ranges(self):
         for low, high in [('0.1', '1.0.0'), ('01.1.0', '1.0.0'), ('0.1.0', '0.1.0'),

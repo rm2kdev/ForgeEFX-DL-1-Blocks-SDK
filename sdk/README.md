@@ -1,5 +1,7 @@
 # ForgeEFX block SDK 1.0.0
 
+Visit [www.forgeefx.com](https://www.forgeefx.com/) for ForgeEFX product information.
+
 ## Build your first effect
 
 Copy `examples/gain` from the SDK release into your own project. Give it a stable
@@ -13,9 +15,7 @@ cmake --build build --config Release
 ```
 
 Install the complete `build/dist/yourcompany.youreffect.fxblock` folder in the
-full ForgeEFX host. Build separately for Windows x64 and Mac. Trial approval is controlled by the host's compiled JSON ID allowlist. Blocks
-cannot grant themselves trial access with a flag; compatible updates with an
-approved ID can load. This example is not approved by the default trial.
+ForgeEFX host. Build separately for Windows x64 and Mac.
 
 An effect folder contains `dsp.c`, `parameters.json`, and optionally `ui.c`.
 `parameters.schema.json` describes the source manifest; the generator also checks
@@ -41,8 +41,7 @@ Optional `minimum_host_version` (inclusive) and `maximum_host_version` (exclusiv
 use strict `major.minor.patch` versions. The generator defaults to `0.1.0` and
 `0.2.0`, and rejects malformed or empty ranges. The host checks this range before
 loading the library and also requires a compatible SDK ABI. Package versions,
-host compatibility and trial ID approval are independent. ID approval is product
-policy rather than cryptographic publisher authentication.
+host compatibility and SDK ABI versions are independent.
 
 ## Binary contract
 

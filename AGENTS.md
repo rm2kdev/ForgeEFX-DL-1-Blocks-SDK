@@ -18,8 +18,7 @@ build dependencies. Do not copy models, dependencies or proprietary assets here.
   Change source metadata and rebuild. Leave the SDK ABI export name unchanged.
 - Preserve released IDs, parameter `name` keys, ordering, ranges and meaning.
   New effects omit `index` (default -1); legacy catalog indexes are reserved.
-- Host version bounds declare compatibility, not trial eligibility. The host's
-  compiled ID allowlist owns trial approval; never add a trial-access flag.
+- Host version bounds declare compatibility with supported host releases.
 
 ## DSP and editor rules
 
