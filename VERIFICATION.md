@@ -16,6 +16,8 @@ Windows x64, MSVC 19.51, CMake/Ninja, Release, Python 3.12:
   incorrect; correcting the build environment resolved it without source changes.
 - `ctest --test-dir build/native -C Release --output-on-failure`: **4/4 passed**
   in the task worktree, including the compiled-module validator.
+- Repeated the same configure, build and CTest commands in a fresh integration
+  worktree: build succeeded and **4/4 passed**.
 - Inspected generated package metadata and binary: effect ID
   `yourcompany.youreffect`, developer ID `yourcompany`, host range
   `[0.1.0, 0.2.0)`, and `bin/windows-x64/block.dll`.
