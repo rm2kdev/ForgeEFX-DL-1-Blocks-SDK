@@ -26,6 +26,60 @@ Windows x64, MSVC 19.51, CMake/Ninja, Release, Python 3.12:
 
 Not run for this documentation change. DSP and SDK runtime behavior are unchanged.
 
+## Responsive UI demo - 5 October 2026
+
+### Automated checks
+
+Windows x64, MSVC 19.51, CMake 4.4.3/Ninja, Release, Python 3.12:
+
+```sh
+cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
+cmake --build build/native --config Release --parallel
+ctest --test-dir build/native -C Release --output-on-failure
+cmake -S examples/responsive_ui -B build/standalone -DCMAKE_BUILD_TYPE=Release -DFORGEEFX_SDK_DIR=<absolute-sdk-path>
+cmake --build build/standalone --config Release --parallel
+```
+
+Configuration also supplied local compiler, generator, and Python selections.
+Root CTest: **7/7 passed**. The UI contract test exercises 108 combinations of
+capture availability, enabled/loading state, gain extremes/default, and recent,
+expired, or absent edits. It checks lifecycle pairing, logical drawing bounds,
+trace containment, silence fallbacks, focus/edit feedback, and unchanged inputs.
+These are service-substitute checks, not pixel or host-layout verification.
+The demo also runs the existing gain behavior tests against its own DSP source.
+Compiled-module validation checks reset, silence after an impulse, parameter
+extremes, independent channel/instance state, and the render bridge.
+The fresh integration worktree also built successfully and passed **7/7** tests.
+
+```powershell
+& ./build/native/sdk/forgeefx_block_validator.exe ./build/standalone/dist/yourcompany.responsive_ui_demo.fxblock/bin/windows-x64/block.dll
+```
+
+The standalone DLL passed. Generated metadata was inspected: developer
+`yourcompany`, effect `yourcompany.responsive_ui_demo`, package `1.0.0`, host
+range `[0.1.0, 0.2.0)`, ABI v1, and Windows x64 binary. Identity values remain
+explicit unpublished example placeholders, not a distribution release.
+
+The initial combined Ninja build exposed inconsistent SDK path normalization
+between examples. Supplying the canonical SDK path in the root CMake project
+resolved duplicate generation dependencies without changing SDK internals.
+Only external compiler/build tools were reused; host/catalog source and assets
+are not dependencies and were not copied into the example.
+
+### Windows host, listening, and DAW checks
+
+Inspected a running DL-1 host screenshot as a reference for its monochrome LCD
+and host-controlled header/footer. The new demo was **not** loaded into that
+running session. Demo artwork screenshots, physical display scaling, audio
+listening, presets/automation, and DAW checks remain unrun. The automated checks
+do not establish visual correctness or host integration. Follow the example's
+README for the outstanding host checks.
+
+### Mac host checks
+
+No Mac compilation, runtime, artwork, or DAW checks were performed. The existing
+Mac platform-selection tests passed on Windows only.
+
 ## Public SDK export - 5 October 2026
 
 ### Automated checks

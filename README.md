@@ -36,3 +36,7 @@ contain a dylib for the selected architecture. Build on each target platform.
 See [VERIFICATION.md](VERIFICATION.md) for tested platforms and outstanding
 listening/host checks, and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for
 the export's scope and source provenance.
+
+For a custom editor with a live waveform, gain feedback, and host-managed
+responsive controls, see [the responsive UI demo](examples/responsive_ui/README.md).
+It is included in the root build alongside the minimal gain template.
