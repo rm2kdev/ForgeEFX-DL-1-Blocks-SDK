@@ -1,0 +1,12 @@
+{
+  "id": "yourcompany.youreffect",
+  "name": "SDK GAIN",
+  "package_version": "1.0.0",
+  "minimum_host_version": "0.1.0",
+  "maximum_host_version": "0.2.0",
+  "process": "gain_process",
+  "reset": "gain_reset",
+  "state_words": 1,
+  "tail_seconds": 0,
+  "parameters": [{"name": "GAIN", "unit": "%", "min": 0, "max": 200, "default": 100}]
+}

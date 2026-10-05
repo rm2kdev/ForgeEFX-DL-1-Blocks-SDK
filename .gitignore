@@ -1,0 +1,12 @@
+.worktrees/
+build/
+dist/
+__pycache__/
+*.py[cod]
+.DS_Store
+.vs/
+.env
+.env.*
+!.env.example
+*.pem
+*.key

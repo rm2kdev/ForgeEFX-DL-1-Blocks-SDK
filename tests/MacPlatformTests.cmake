@@ -1,0 +1,17 @@
+include("${CMAKE_CURRENT_LIST_DIR}/../sdk/cmake/ForgeEFXBlock.cmake")
+
+function(check target_architectures host_processor expected)
+    set(CMAKE_OSX_ARCHITECTURES "${target_architectures}")
+    set(CMAKE_SYSTEM_PROCESSOR "${host_processor}")
+    forgeefx_macos_platform(actual)
+    if(NOT actual STREQUAL expected)
+        message(FATAL_ERROR "Target '${target_architectures}' on '${host_processor}': expected ${expected}, got ${actual}")
+    endif()
+endfunction()
+
+check("arm64;x86_64" "arm64" macos-universal)
+check("x86_64" "arm64" macos-x64)
+check("arm64" "x86_64" macos-arm64)
+check("" "arm64" macos-arm64)
+check("" "x86_64" macos-x64)
+message(STATUS "Five Mac package target/host architecture combinations passed")

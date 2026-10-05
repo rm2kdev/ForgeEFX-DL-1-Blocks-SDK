@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ForgeEFX SDK v1 source effect manifest",
+  "type": "object",
+  "required": ["parameters"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"},
+    "name": {"type": "string", "minLength": 1},
+    "package_version": {"type": "string", "minLength": 1},
+    "minimum_host_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "maximum_host_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "process": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "reset": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "render": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "stereo_process": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "state_words": {"type": "integer", "minimum": 1, "maximum": 67108864},
+    "state_alignment": {"enum": [4, 8]},
+    "tail_seconds": {"type": "integer", "minimum": -1, "maximum": 3600},
+    "tempo_param": {"type": "integer", "minimum": -1, "maximum": 63},
+    "sync_param": {"type": "integer", "minimum": -1, "maximum": 63},
+    "trails_param": {"type": "integer", "minimum": -1, "maximum": 63},
+    "index": {"type": "integer", "minimum": -1},
+    "order": {"type": "integer"},
+    "parameters": {
+      "type": "array", "minItems": 1, "maxItems": 64,
+      "items": {
+        "type": "object", "required": ["name", "min", "max", "default"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "display_name": {"type": "string", "minLength": 1},
+          "unit": {"type": "string"},
+          "min": {"type": "integer", "minimum": -1000000, "maximum": 1000000},
+          "max": {"type": "integer", "minimum": -1000000, "maximum": 1000000},
+          "default": {"type": "integer", "minimum": -1000000, "maximum": 1000000},
+          "format": {"enum": ["number", "knob", "signed"]},
+          "labels": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    }
+  },
+  "$comment": "Generator also checks defaults within ranges, unique parameter keys, range width at most 1000000, exact choice count and metadata indexes within parameter_count. Official legacy indexes are reserved."
+}
