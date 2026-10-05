@@ -13,6 +13,25 @@ change, validate, and load your first block. Use the
 also read [AGENTS.md](AGENTS.md). The lower-level contract is in
 [sdk/README.md](sdk/README.md) and [forgeefx_block.h](sdk/include/forgeefx_block.h).
 
+## Bring your own effects to life with an AI agent
+
+This project is pre-configured for LLM coding agents to help you create bespoke
+DL-1 blocks. Open the SDK repository folder in your preferred agent and describe
+the effect you want. The included [AGENTS.md](AGENTS.md) directs the agent to the
+[Development Guide](Development%20Guide.md), SDK reference and manifest schema,
+giving it the instructions it needs to build, test and package your ideas.
+
+Ask for an emulation of a favourite analog pedal, invent a pedal that does not
+exist yet, or explore sounds you have never heard before. Describe the character,
+controls and behaviour you imagine, then refine the result with your agent as
+you play and listen. Your imagination is the starting point.
+
+Try a prompt like this:
+
+> Read AGENTS.md and Development Guide.md, then help me build a bespoke DL-1
+> block: a warm analog-style delay with slowly drifting echoes and a tone control.
+> Build and validate it, then explain how to load it into DL-1 so I can try it.
+
 ## Examples in DL-1
 
 The bundled examples loaded in the Windows DL-1 standalone host, shown at

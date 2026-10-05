@@ -1,5 +1,36 @@
 # Verification
 
+## README agent introduction - 5 October 2026
+
+### Automated checks
+
+Added an introduction to creating bespoke effects with an LLM coding agent,
+links to the repository instructions, and a sample prompt. Documentation only.
+Windows x64, MSVC 19.51, CMake/Ninja, Release, Python 3.12. Commands run in
+`.worktrees/llm-blocks-writer` with external build tools selected in the shell:
+
+```sh
+cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=<python-executable>
+cmake --build build/native --config Release --parallel
+ctest --test-dir build/native -C Release --output-on-failure
+git diff --check
+```
+
+The root build succeeded and **11/11 tests passed**, including validation of
+all four compiled example DLLs. All 17 README local links resolve and the diff
+check passed. Inspected generated manifests: the four example identities retain
+developer `yourcompany`, package version `1.0.0`, ABI v1 and host range
+`[0.1.0, 0.2.0)`. The build produced their `bin/windows-x64/block.dll` binaries.
+These remain unpublished templates with intentional placeholder identities.
+
+Repeated the root configure/build/CTest commands in the fresh
+`.worktrees/llm-blocks-integration` worktree: build succeeded and **11/11 tests
+passed**. The integration diff check also passed.
+
+### Listening, Windows host, macOS host and DAW checks
+
+Not run for this documentation change. No DSP, editor or SDK behavior changed.
+
 ## README example screenshots - 5 October 2026
 
 ### Automated checks
