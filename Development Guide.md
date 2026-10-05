@@ -26,8 +26,8 @@ cmake --build build/native --config Release --parallel
 ctest --test-dir build/native -C Release --output-on-failure
 ```
 
-CTest loads the actual example module with the SDK validator, checks the gain
-algorithm, tests host-version metadata, and checks Mac architecture selection.
+CTest loads both actual example modules with the SDK validator, checks the gain
+and delay algorithms, tests host-version metadata, and checks Mac architecture selection.
 Architecture-selection tests do not run a Mac binary.
 
 For an explicit Visual Studio x64 build, add `-A x64` to the configure command
@@ -46,6 +46,12 @@ build/native/dist/yourcompany.youreffect.fxblock/
 The developer and effect IDs are deliberately buildable placeholders. The gain
 example defaults to unity gain, permits 0..200 percent gain, and saturates to
 the Q16 full-scale range. It uses the host's default parameter editor.
+
+The combined build also creates `build/native/dist/yourcompany.delay.fxblock/`.
+`examples/delay` demonstrates a fixed circular delay buffer and a basic custom
+editor with Time, Feedback and Mix controls. See the root README for its ranges,
+standalone build command and intentional limitations. Both examples are
+unpublished templates with placeholder identities.
 
 ## 3. Give your block its own identity
 
