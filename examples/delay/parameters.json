@@ -1,0 +1,17 @@
+{
+  "id": "yourcompany.delay",
+  "name": "SDK DELAY",
+  "package_version": "1.0.0",
+  "minimum_host_version": "0.1.0",
+  "maximum_host_version": "0.2.0",
+  "process": "delay_process",
+  "reset": "delay_reset",
+  "render": "delay_render",
+  "state_words": 48001,
+  "tail_seconds": 120,
+  "parameters": [
+    {"name": "TIME", "unit": "MS", "min": 1, "max": 1000, "default": 300},
+    {"name": "FEEDBACK", "unit": "%", "min": 0, "max": 90, "default": 30},
+    {"name": "MIX", "unit": "%", "min": 0, "max": 100, "default": 30}
+  ]
+}

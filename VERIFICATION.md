@@ -80,6 +80,71 @@ README for the outstanding host checks.
 No Mac compilation, runtime, artwork, or DAW checks were performed. The existing
 Mac platform-selection tests passed on Windows only.
 
+## Delay demo - 5 October 2026
+
+### Automated checks
+
+Windows x64, MSVC 19.51, CMake 4.4.3/Ninja, Release, Python 3.12.
+Commands run from `.worktrees/delay-builder` after selecting the locally
+installed compiler, CMake, Ninja, Python and Windows SDK in the shell:
+
+```sh
+cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/native --config Release --parallel
+ctest --test-dir build/native -C Release --output-on-failure
+cmake -S examples/delay -B build/delay -G Ninja -DCMAKE_BUILD_TYPE=Release -DFORGEEFX_SDK_DIR=<absolute-sdk-directory>
+cmake --build build/delay --config Release --parallel
+./build/native/sdk/forgeefx_block_validator.exe ./build/delay/dist/yourcompany.delay.fxblock/bin/windows-x64/block.dll
+```
+
+The configure commands also selected `Python3_EXECUTABLE` explicitly. All **6/6
+CTest checks passed**, including the actual gain and delay DLLs. The standalone
+delay DLL passed ABI, metadata, instance independence, reset, parameter extremes
+and render-service validation. `delay_behavior` verifies exact impulse timing at
+1, 300 and 1000 ms, positive/negative echoes, circular-buffer wrap, feedback
+attenuation, default and endpoint mix behavior, full-scale saturation, separate
+stereo lanes/instances, dirty and repeated reset, silence, rapid parameter
+changes, state-allocation guards and decay within the declared 120-second tail.
+Stereo uses the mono callback independently for each host-owned channel state.
+
+Merged the delay work with the concurrently landed public documentation and
+responsive UI demo in `.worktrees/delay-integration`, preserving their changes.
+The root configure/build commands above succeeded there and CTest passed **9/9**
+checks. Integration reused the canonical SDK path setup already added by the
+responsive UI demo. `git diff --check` passed. No SDK implementation changes
+were needed.
+
+Inspected generated package metadata and descriptor: `yourcompany.delay`,
+developer `yourcompany`, version `1.0.0`, host range `[0.1.0, 0.2.0)`, ABI v1,
+48 kHz, 48,001 state words per channel, three parameters, legacy index -1,
+custom render callback, and `bin/windows-x64/block.dll`. Placeholder identities
+are intentional for this unpublished SDK demo; it is not a distribution release.
+
+The first combined Ninja build exposed two spellings of the SDK generator path
+after adding a second example. Canonicalizing the shared SDK path in the root
+CMake project removed the duplicate regeneration input; SDK internals and the
+gain example remain unchanged. Build tools were reused externally; no host or
+catalog code, dependencies, models or assets were copied or linked into the SDK.
+
+### Windows host visual checks
+
+Loaded the standalone package into the existing full Windows DL-1 application
+using a process-local `FORGEEFX_BLOCKS_PATH`. The host discovered `SDK DELAY` in
+Examples. Inspected actual editor screenshots at defaults (300 ms, 30%, 30%),
+with each control selected, and at 1000 ms / 90% feedback / 69% mix. Labels,
+knobs, formatted readouts and host controls were visible without artwork overlap.
+Local screenshot evidence is in the task worktree's ignored `build/host-ui/`.
+The running host executable changed during concurrent host development; minimum
+values, 100% mix and bypass appearance were not conclusively checked. Validator
+drawing stubs are not used as visual proof.
+
+### Listening, DAW and macOS checks
+
+No listening, DAW loading, preset round-trip, DAW automation, Mac compilation,
+Mac execution or signing/notarization was performed. Delay-time changes are
+intentionally unsmoothed and can click. Host screenshots establish editor
+appearance only, not audio routing or audio quality.
+
 ## Public SDK export - 5 October 2026
 
 ### Automated checks
