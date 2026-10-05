@@ -1,5 +1,48 @@
 # Verification
 
+## README example screenshots - 5 October 2026
+
+### Automated checks
+
+Windows x64, MSVC 19.51, CMake/Ninja, Release, Python 3.12. Commands run in
+the screenshot task worktree, with local compiler, Ninja and Python selections:
+
+```sh
+cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
+cmake --build build/native --config Release --parallel
+ctest --test-dir build/native -C Release --output-on-failure
+```
+
+The root build succeeded and **11/11 tests passed**, including compiled-module
+validation for all four examples. Inspected the three captured packages:
+`yourcompany.delay`, `yourcompany.phaser`, and `yourcompany.responsive_ui_demo`;
+each uses developer `yourcompany`, package version `1.0.0`, ABI v1, host range
+`[0.1.0, 0.2.0)`, and `bin/windows-x64/block.dll`. These remain unpublished
+example identities. No DSP, SDK or package metadata was changed.
+
+Merged with the current documentation in a fresh integration worktree and
+repeated the root configure/build/CTest commands: build succeeded and **11/11
+tests passed**. All README local links resolve. The three captures retain their
+native JPEG encoding at 1211 x 655 pixels (about 263 KiB combined).
+`git diff --check` passed.
+
+### Windows host visual checks
+
+Launched the existing Windows DL-1 standalone executable with a process-local
+`FORGEEFX_BLOCKS_PATH` pointing at the task build's complete example packages.
+Loaded Delay, Phaser and Responsive UI from the Examples menu and inspected
+their editors at defaults. Saved unaltered application-window captures in
+`docs/screenshots/` and embedded them in the root README with source links and
+descriptive alt text. Delay shows 300 ms / 30% / 30%; Phaser shows rate 5 in
+0.1 Hz units (0.5 Hz) and depth 75%; Responsive UI shows 100% gain and a flat
+output trace with no input signal. Captures establish loading and appearance
+at these settings, not audio routing or listening quality.
+
+### Listening, macOS host and DAW checks
+
+Not run. Parameter extremes, bypass, presets, automation and live waveform
+response were not checked in the host for this documentation change.
+
 ## Getting started guide - 5 October 2026
 
 ### Automated checks
