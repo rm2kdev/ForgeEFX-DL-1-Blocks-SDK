@@ -1,5 +1,8 @@
 # Developing blocks for ForgeEFX DL-1
 
+New to block development? Follow [Getting Started](Getting%20Started.md) for a
+guided first build, a parameter exercise, and explanations of the DSP interface.
+
 This guide takes you from the bundled gain template to a standalone `.fxblock`
 package. SDK 1.0.0 exposes ABI v1. The DL-1 host loads compatible external
 blocks; the SDK does not include the host application.

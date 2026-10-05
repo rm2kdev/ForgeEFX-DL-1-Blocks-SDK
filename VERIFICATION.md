@@ -1,5 +1,63 @@
 # Verification
 
+## Getting started guide - 5 October 2026
+
+### Automated checks
+
+Documentation only: added a beginner walkthrough and links from the root README,
+development guide, and SDK README. The guide targets approximately 80%
+ASD-STE100-style prose. This is an editorial target, not formal certification
+or a measured dictionary-compliance result.
+
+Windows x64, MSVC 19.51, CMake 4.4.3/Ninja, Release, Python 3.12.14.
+Commands run in `.worktrees/getting-started-writer` with external compiler and
+Windows SDK tools selected in the shell:
+
+```sh
+cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=<python-executable>
+cmake --build build/native --config Release --parallel
+ctest --test-dir build/native -C Release --output-on-failure
+```
+
+The root build succeeded and **11/11 CTest checks passed**. These include the
+actual example binaries and existing DSP tests. No SDK or DSP source changed.
+
+Rehearsed the Windows copy-and-edit procedure under the ignored
+`build/walkthrough` folder. Copied only the public SDK and gain template into a
+temporary SDK layout, copied the template to its sibling `my-first-block`, and
+changed the source gain default from 100 to 50. From that temporary SDK root:
+
+```powershell
+$sdkRoot = (Get-Location).Path
+cmake -S ../my-first-block -B build/first-block -G Ninja -DCMAKE_BUILD_TYPE=Release "-DFORGEEFX_SDK_DIR=$sdkRoot/sdk" -DPython3_EXECUTABLE=<python-executable>
+cmake --build build/first-block --config Release --parallel
+& <task-worktree>/build/native/sdk/forgeefx_block_validator.exe ./build/first-block/dist/yourcompany.youreffect.fxblock/bin/windows-x64/block.dll
+```
+
+The standalone build and actual DLL validation passed. Inspected the generated
+manifest and descriptor: gain default 50, effect `yourcompany.youreffect`,
+developer `yourcompany`, package `1.0.0`, host range `[0.1.0, 0.2.0)`, ABI v1,
+48 kHz, and `bin/windows-x64/block.dll`. Placeholders remain intentional for the
+unpublished exercise. No distribution package was committed.
+An initial rehearsal setup command resolved a relative path against the wrong
+directory; using PowerShell `Resolve-Path` corrected the temporary harness.
+The documented copy and CMake commands required no correction.
+
+A one-off documentation check passed for 23 local links, including the editor
+section anchor, and balanced code fences in all four guide/reference files.
+Reviewed the guide against the source schema, gain implementation, CMake helper,
+and existing development guide. A prose-length check found no non-table prose
+lines over 25 whitespace-separated words; this is not a full STE language audit.
+`git diff --check` passed.
+
+### Listening, Windows host, macOS host and DAW checks
+
+Not run for this documentation change. No Mac compilation, Visual Studio
+generator build, listening, host loading, artwork inspection, or DAW tests were
+performed. Mac platform-selection tests ran on Windows only. The guide separates
+compiled-module validation from the host and listening checks still required
+for a developer's own block.
+
 ## Public documentation refresh - 5 October 2026
 
 ### Automated checks

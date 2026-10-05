@@ -7,7 +7,9 @@ firmware, effect catalog or model downloads are needed.
 
 Visit [www.forgeefx.com](https://www.forgeefx.com/) for ForgeEFX product information.
 
-Start with [Development Guide.md](Development%20Guide.md). Coding agents should
+New developers: start with [Getting Started](Getting%20Started.md) to build,
+change, validate, and load your first block. Use the
+[Development Guide](Development%20Guide.md) for the full workflow. Coding agents should
 also read [AGENTS.md](AGENTS.md). The lower-level contract is in
 [sdk/README.md](sdk/README.md) and [forgeefx_block.h](sdk/include/forgeefx_block.h).
 
