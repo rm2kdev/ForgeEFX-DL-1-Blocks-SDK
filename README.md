@@ -5,6 +5,11 @@ Includes the ABI headers, drawing-service bridge, CMake package generator,
 compiled-module validator and working examples. No host checkout, JUCE,
 firmware, effect catalog or model downloads are needed.
 
+Analog circuit authors can use the bundled
+[voltage helpers](sdk/README.md#analog-circuit-blocks) and the standard
+5.62 V peak input / 4.04 V peak output convention per digital full scale.
+Digital examples retain their existing Q16 behavior; ABI v1 is unchanged.
+
 Visit [www.forgeefx.com](https://www.forgeefx.com/) for ForgeEFX product information.
 
 New developers: start with [Getting Started](Getting%20Started.md) to build,

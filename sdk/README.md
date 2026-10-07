@@ -45,6 +45,60 @@ use strict `major.minor.patch` versions. The generator defaults to `0.1.0` and
 loading the library and also requires a compatible SDK ABI. Package versions,
 host compatibility and SDK ABI versions are independent.
 
+## Analog circuit blocks
+
+The SDK includes `include/expansion_analog.h`, the same independent DSP helper
+header shipped by the Blocks SDK. It requires only standard C library headers;
+no catalog or host checkout is needed. Include it with `#include "expansion_analog.h"`.
+
+Model circuit signals in physical volts. The measured DL-1/MOTU convention is
+**5.62 V peak per digital full scale at the input jack** (`AX_IN_VOLTS`) and
+**4.04 V peak per digital full scale at the output jack** (`AX_OUT_VOLTS`), with
+MOTU guitar input gain at +0 dB. These values come from the BOSS BD-2 measurements
+of 6 October 2026. They are peak sine amplitudes, not RMS; mixing the two
+conventions introduces a 3.01 dB error. See [source provenance](../THIRD_PARTY_NOTICES.md).
+
+Convert once at each circuit boundary, inside your process callback:
+
+```c
+float input_volts = axInput(sample) * AX_IN_VOLTS;
+float output_volts = circuit_step(input_volts, params, state);
+return axOutput(output_volts / AX_OUT_VOLTS);
+```
+
+`circuit_step` represents your own circuit implementation, not an SDK function.
+`axInput` converts Q16 to normalized digital amplitude, clamped to
+[-1, 65535/65536]. `axOutput` clamps normalized output to the same range and
+converts to Q16 by truncating toward zero; non-finite output becomes silence.
+Neither helper applies the voltage constants automatically.
+
+Keep component gains, resistor dividers, supply rails, diode thresholds and
+detectors in physical units. Blend clean and distorted circuit branches in volts
+before output conversion. Restore volts after any internal normalization.
+Preserve real circuit recovery amplifiers and clipping, without adding loudness
+normalization, makeup trims or synthetic soft converter ceilings. Document quiet
+noon LEVEL settings rather than adjusting them to digital unity.
+
+Physical unity means equal input and output jack volts. With these converters,
+that gives about **+2.87 dB in digital samples** before clipping. Software bypass
+stays at digital unity. Digital effects, including the bundled gain, delay,
+phaser and responsive UI examples, keep their normalized Q16 processing and do
+not apply these voltage conversions. Identify analog-style algorithms without a
+defensible voltage mapping as uncalibrated; do not invent volts or claim a
+hardware match.
+
+When migrating an existing circuit block, preserve its ID, parameter keys,
+ordering, ranges, defaults and legacy index. Saved patches retain settings but
+may sound more driven and change level. Compare before/after peak jack levels
+at the same input gain and knob settings, as well as CPU cost. Update circuit
+plots and live-peak conversions when their voltage assumptions change; UI peak
+and waveform fields still contain Q16 digital samples. Inspect affected editors
+in the actual host. Keep automated results, listening, Windows host, Mac host
+and DAW checks separate in `VERIFICATION.md`.
+
+Calibration is a DSP convention, not an ABI or manifest change. Keep provenance
+in documentation and use host-version bounds only for loading compatibility.
+
 ## Binary contract
 
 `include/forgeefx_block.h` is authoritative. One C export,

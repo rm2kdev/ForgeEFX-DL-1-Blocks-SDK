@@ -150,6 +150,24 @@ alignment or assume packed structs. The SDK does not expose file/model services
 or general custom-state serialization. Keep ABI layouts and calling conventions
 unchanged when adding your own effect.
 
+### Analog circuit voltage convention
+
+For analog circuit models, first read the
+[voltage convention](sdk/README.md#analog-circuit-blocks). Include the bundled
+`expansion_analog.h`, convert Q16 input with `axInput(sample) * AX_IN_VOLTS`,
+process the circuit in physical volts, and return
+`axOutput(output_volts / AX_OUT_VOLTS)`. The calibrated full-scale values are
+5.62 V peak in and 4.04 V peak out, not RMS. Convert only at the circuit's jacks;
+preserve component gain, rails and branch mixing in volts. Equal jack voltage
+is about +2.87 dB digitally, not digital unity. Digital effects and software
+bypass retain normalized Q16 processing. Existing examples need no rescaling.
+
+For a migrated analog block, compare peak levels and CPU cost before/after,
+preserve saved parameter definitions, and document possible changes in drive
+and level. Check circuit-based plots and meter conversions in the actual host.
+The SDK tests verify the conversion convention; they do not establish hardware
+accuracy for your circuit.
+
 ## 6. Define parameters and compatibility
 
 Edit `parameters.json`, using `sdk/parameters.schema.json` as the reference.

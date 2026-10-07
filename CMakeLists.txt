@@ -16,6 +16,12 @@ add_subdirectory(examples/delay)
 add_subdirectory(examples/phaser)
 
 if(BUILD_TESTING)
+    add_executable(analog_voltage_tests tests/AnalogVoltageTests.c)
+    target_include_directories(analog_voltage_tests PRIVATE sdk/include)
+    if(NOT MSVC)
+        target_link_libraries(analog_voltage_tests PRIVATE m)
+    endif()
+    add_test(NAME analog_voltage_behavior COMMAND analog_voltage_tests)
     add_test(NAME package_compatibility
         COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/PackageCompatibilityTests.py")
     add_test(NAME macos_platform
