@@ -52,6 +52,12 @@ Standalone build and compiled-DLL validator passed. Inspected root packages
 These are unpublished examples with intentional placeholder identities, not
 distribution-ready effects.
 
+After merging into `.worktrees/voltage-integration`, repeated the root
+configure/build/CTest commands in a fresh build directory: build succeeded and
+**12/12 tests passed**. Verified all four DLLs have x64 PE machine type and
+asserted the package metadata above. All 35 local links in the updated public
+guides and provenance document resolve. Integration diff check passed.
+
 ### Listening, Windows host, macOS host and DAW checks
 
 Not run. No example DSP or artwork changed. No new hardware measurements or
