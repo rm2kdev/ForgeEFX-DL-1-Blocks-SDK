@@ -260,6 +260,14 @@ This limit is **saturation**. It prevents an excessive result from wrapping to a
 | 32,768 | 200% | 65,535 | Limited positive output |
 
 Gain needs no audio history. Its reset function clears the one reserved state word.
+The gain example is a digital effect, so it needs no conversion to volts.
+For an analog circuit model, use the SDK's
+[voltage helpers](sdk/README.md#analog-circuit-blocks): digital full scale maps
+to 5.62 V peak at the input jack and 4.04 V peak at the output jack.
+These are peak values, not RMS. Process the circuit in volts and convert only
+at its input and output. Do not add these conversions to the digital examples
+or to software bypass.
+
 A delay needs state to remember earlier samples.
 The host supplies separate state arrays for channels and instances.
 

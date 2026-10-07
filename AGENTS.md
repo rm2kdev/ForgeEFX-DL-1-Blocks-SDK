@@ -24,6 +24,14 @@ build dependencies. Do not copy models, dependencies or proprietary assets here.
 
 - Use C11/C++20, four spaces, and surrounding C conventions. Samples are signed
   Q16 at 48 kHz. Use widened intermediates and defined overflow behavior.
+- For analog circuit models, read `sdk/README.md`'s voltage convention. Use
+  `expansion_analog.h`: `AX_IN_VOLTS` is 5.62 V peak and `AX_OUT_VOLTS` is
+  4.04 V peak per digital full scale. Convert once at each circuit jack and
+  keep internal gains, rails, thresholds and branch mixes in volts. Do not
+  substitute RMS, guessed voltage scales or loudness-normalizing trims.
+  Keep digital effects and software bypass in digital units. Document unknown
+  physical mappings as uncalibrated. Preserve parameter defaults on migration,
+  report drive/level changes, and check circuit plots and live-peak conversions.
 - No allocation, file I/O, locks, blocking work, model loading, logging or drawing
   inside process/reset callbacks. All mutable instance state belongs in the
   host-provided state arrays, with deterministic reset and independent channels.

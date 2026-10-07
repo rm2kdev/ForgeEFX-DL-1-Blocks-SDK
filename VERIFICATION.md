@@ -1,5 +1,64 @@
 # Verification
 
+## Standard analog voltage support - 7 October 2026
+
+### Automated checks
+
+Imported the public SDK's independent `expansion_analog.h` unchanged from
+Blocks revision `273879ec9166cb751e229511f1e40879ae86af4d` and documented the
+5.62 V peak input / 4.04 V peak output convention. ABI declarations, manifests,
+parameter definitions and example DSP/editor sources are unchanged.
+
+Windows x64, MSVC 19.51, CMake 4.4.4/Ninja 1.13.2, Python 3.12.14, Windows SDK
+10.0.26100.7175. Initial configure attempts exposed missing tool paths and
+Windows SDK components. CMake, Ninja and the Microsoft Windows SDK NuGet
+packages were installed in an external user cache, and the compiler environment
+was corrected before the successful runs. No host/catalog build dependency or
+tool binaries were added to this repository.
+
+Commands in `.worktrees/voltage-builder`, with external tool paths selected in
+the shell (the Python placeholder below represents that local selection):
+
+```sh
+cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=<python-executable>
+cmake --build build/native --config Release --parallel
+ctest --test-dir build/native -C Release --output-on-failure
+cl /nologo /TP /std:c++20 /EHsc /I sdk/include tests/AnalogVoltageTests.c /Fo:build/native/analog_cpp.obj /Fe:build/native/analog_cpp.exe
+./build/native/analog_cpp.exe
+git diff --check
+```
+
+Root build succeeded; **12/12 tests passed**. The new test checks positive and
+negative measured jack levels, physical unity's +2.867 dB digital ratio, silence,
+integer extremes, clipping and non-finite output. It also passed when compiled
+as C++20. Existing tests cover reset, state independence, parameter extremes,
+channel isolation, digital example behavior and all four compiled example DLLs.
+The imported header's SHA-256 matched the reference copy. Diff check passed.
+
+Copied only `sdk/` to `build/sdk-copy/` and built gain against that copy:
+
+```powershell
+Copy-Item -LiteralPath sdk -Destination build/sdk-copy -Recurse
+cmake -S examples/gain -B build/standalone -G Ninja -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=<python-executable> "-DFORGEEFX_SDK_DIR=<worktree>/build/sdk-copy"
+cmake --build build/standalone --config Release --parallel
+./build/native/sdk/forgeefx_block_validator.exe ./build/standalone/dist/yourcompany.youreffect.fxblock/bin/windows-x64/block.dll
+```
+
+Standalone build and compiled-DLL validator passed. Inspected root packages
+`yourcompany.youreffect`, `yourcompany.delay`, `yourcompany.phaser`, and
+`yourcompany.responsive_ui_demo`: developer `yourcompany`, package version
+`1.0.0`, ABI v1, host range `[0.1.0, 0.2.0)`, 48 kHz and existing
+`bin/windows-x64/block.dll` binaries. Standalone gain retains the same metadata.
+These are unpublished examples with intentional placeholder identities, not
+distribution-ready effects.
+
+### Listening, Windows host, macOS host and DAW checks
+
+Not run. No example DSP or artwork changed. No new hardware measurements or
+circuit-accuracy claims are made. Mac architecture-selection tests do not run
+Mac binaries. The new conversion tests do not validate every unrelated primitive
+in the shared header.
+
 ## README agent introduction - 5 October 2026
 
 ### Automated checks

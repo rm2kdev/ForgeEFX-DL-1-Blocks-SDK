@@ -19,5 +19,16 @@ Eigen, JSON library, fonts, captured models, impulse responses or host assets.
 Python tooling uses the standard library. CMake, Python, the compiler and platform
 SDK are external build tools and are not vendored here.
 
+The standalone `sdk/include/expansion_analog.h` is copied unchanged from
+`blocks/expansion_analog.h` at Blocks revision
+`273879ec9166cb751e229511f1e40879ae86af4d` (6 October 2026), as included by that
+repository's SDK archive packager. It contains independent DSP primitives, not
+effect models. Its voltage convention and the accompanying authoring guidance
+come from that revision's `sdk/README.md` and `CONVERTER_VOLTAGE_AUDIT.md`.
+The audit cites BOSS BD-2 measurements from 6 October 2026 with MOTU guitar
+input gain at +0 dB: 5.62 V peak input and 4.04 V peak output per digital full
+scale. Measurement recordings, circuit models and host tools are not included
+or required. This SDK update does not claim fresh hardware measurements.
+
 The full Blocks repository's provenance document covers additional code and
 assets outside this export. Those components are not dependencies of this SDK.
