@@ -101,7 +101,7 @@ in documentation and use host-version bounds only for loading compatibility.
 
 ## Binary contract
 
-`include/forgeefx_block.h` is authoritative. One C export,
+`include/forgeefx_block.h` is authoritative. One required C export,
 `forgeefx_get_block_api(requested_abi)`, returns the immutable module descriptor
 or null for unsupported versions. ABI v1 uses naturally aligned platform structs,
 32-bit `int`, and 64-bit Windows/Mac targets. Never change calling conventions or
@@ -122,7 +122,7 @@ parameter rather than exposing the full 32-bit integer range directly.
 DSP/reset callbacks must not allocate, block, perform file I/O, load models or use
 drawing services. Do not store per-instance state in module globals. The host owns
 routing, sample-rate conversion and saved parameter values. General custom state
-serialization, model/file services and live module unloading are outside ABI v1.
+serialization, model/file loading and live module unloading are outside ABI v1.
 
 `render(ui, services)` runs on the message thread. Both arguments expire on return.
 The SDK wrapper installs the host service table in module-local thread-local
@@ -138,3 +138,37 @@ processing/rendering callback could still reference them.
 Native blocks execute with host privileges; a malformed block can crash the DAW.
 The validator catches common integration errors but does not establish trust or
 audio quality. Sign Mac releases and test supported DAWs before distribution.
+
+## Host content folders
+
+Include `forgeefx_host_services.h` and call
+`forgeefx_host_get_folder(FORGEEFX_FOLDER_NAM, buffer, capacity, &required)` or
+use `FORGEEFX_FOLDER_IR`. The host returns its current absolute UTF-8 path. The
+caller owns the buffer; `required` is mandatory and includes the terminating NUL.
+Pass a null buffer and capacity zero to query the size. Size queries and small
+buffers return `FORGEEFX_HOST_BUFFER_TOO_SMALL`; retry if preferences change
+between sizing and copying. Success is `FORGEEFX_HOST_OK`. Other results are
+`FORGEEFX_HOST_UNAVAILABLE`, `FORGEEFX_HOST_INVALID_ARGUMENT` and
+`FORGEEFX_HOST_ERROR`. Failed calls empty a supplied nonempty buffer and clear
+the required size, except that small-buffer results retain the needed size.
+
+The CMake helper compiles `src/host_bridge.c` into every module, with or without
+an editor. A supporting host binds the optional `forgeefx_set_host_services`
+export after validating the descriptor, before block callbacks. The immutable
+table and its context remain valid through all module calls; binding must not
+race queries. The bridge rejects unsupported service versions, short structs
+and missing callbacks. Older hosts leave the service unavailable. Older modules
+can omit the export. Existing block/render ABI v1 layouts remain unchanged.
+
+Queries work without an open editor. Query again to observe folder changes.
+Use only UI or worker threads: never query or perform file/model work inside
+process/reset. The service provides paths, not content loading or serialization.
+No heap ownership crosses the ABI. Drawing-service pointers retain their separate,
+render-only lifetime; do not use them for content access.
+
+Handle unavailable services at runtime, including older builds sharing a host
+version. If folders are required, set the package's `minimum_host_version` to the
+first supporting release once assigned; a version range does not replace the
+capability check. The service ABI version is independent of the host version.
+See the [development guide](../Development%20Guide.md#read-the-hosts-nam-and-ir-folders)
+for a complete C allocation/retry example and content-loading constraints.

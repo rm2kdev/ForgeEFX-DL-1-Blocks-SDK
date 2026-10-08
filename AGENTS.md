@@ -43,6 +43,15 @@ build dependencies. Do not copy models, dependencies or proprietary assets here.
   Pair `block_ui_begin(ui)` and `block_ui_end(ui)` and draw only between them.
   UI/service pointers expire after rendering. Inspect actual host screenshots
   when changing artwork; the validator's drawing stubs do not verify appearance.
+- Read `sdk/include/forgeefx_host_services.h` and the guide's folder section
+  before adding NAM/IR content selection. Query `forgeefx_host_get_folder` with
+  `FORGEEFX_FOLDER_NAM` or `FORGEEFX_FOLDER_IR` on UI/worker threads only, never
+  process/reset. Use caller-owned UTF-8 buffers, handle size changes and all
+  statuses, and handle unavailable services on older hosts. Do not read private
+  host preferences or retain render-service pointers for content access.
+  The optional host-services table has module-call lifetime, unlike render
+  services. Keep block/render ABI v1 layouts unchanged. Required capabilities
+  need a tested minimum host release once assigned plus runtime probing.
 
 ## Workflow and validation
 
