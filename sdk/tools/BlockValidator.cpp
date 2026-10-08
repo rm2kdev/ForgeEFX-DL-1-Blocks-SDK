@@ -1,4 +1,5 @@
 #include "forgeefx_block.h"
+#include "forgeefx_host_services.h"
 #include <array>
 #include <algorithm>
 #include <cstddef>
@@ -22,6 +23,24 @@ static void formatValue(char* output, int, int, int) { std::strcpy(output,"0"); 
 static void require(bool condition, const char* message)
 {
     if (!condition) throw std::runtime_error(message);
+}
+
+static int32_t getFolder(void*, uint32_t folder, char* buffer, uint32_t size, uint32_t* required)
+{
+    if (buffer && size) buffer[0] = '\0';
+    if (required) *required = 0;
+    if (!required || (!buffer && size) || (folder != FORGEEFX_FOLDER_NAM && folder != FORGEEFX_FOLDER_IR))
+        return FORGEEFX_HOST_INVALID_ARGUMENT;
+    // Validator exposes synthetic paths; it never creates or loads content.
+#ifdef _WIN32
+    const char* path = folder == FORGEEFX_FOLDER_NAM ? "C:/ForgeEFX-validator/NAM" : "C:/ForgeEFX-validator/IR";
+#else
+    const char* path = folder == FORGEEFX_FOLDER_NAM ? "/ForgeEFX-validator/NAM" : "/ForgeEFX-validator/IR";
+#endif
+    *required = static_cast<uint32_t>(std::strlen(path) + 1);
+    if (size < *required) return FORGEEFX_HOST_BUFFER_TOO_SMALL;
+    std::memcpy(buffer, path, *required);
+    return FORGEEFX_HOST_OK;
 }
 
 int main(int argc, char** argv)
@@ -50,6 +69,15 @@ int main(int argc, char** argv)
             if (p.choice_count) require(p.choices && p.choice_count == uint32_t(p.maximum-p.minimum+1), "Invalid choices");
             params[i] = p.default_value;
         }
+        // The extension is optional. Legacy modules retain their ABI v1 path.
+#ifdef _WIN32
+        auto bind = reinterpret_cast<ForgeEFXSetHostServices>(GetProcAddress(module, "forgeefx_set_host_services"));
+#else
+        auto bind = reinterpret_cast<ForgeEFXSetHostServices>(dlsym(module, "forgeefx_set_host_services"));
+#endif
+        const ForgeEFXHostServices hostServices { FORGEEFX_HOST_SERVICES_ABI_VERSION,
+            sizeof(ForgeEFXHostServices), nullptr, getFolder };
+        if (bind) bind(&hostServices);
         std::vector<std::max_align_t> a((api->state_words * sizeof(int) + sizeof(std::max_align_t)-1) / sizeof(std::max_align_t));
         auto b = a;
         auto* sa = reinterpret_cast<int*>(a.data());

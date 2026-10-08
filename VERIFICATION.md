@@ -1,5 +1,48 @@
 # Verification
 
+## Host content folder extension - 8 October 2026
+
+### Automated checks
+
+Added an optional, versioned host-services export and a module-local NAM/IR
+folder helper without changing block/render ABI v1 layouts. The CMake helper
+includes the bridge with and without custom UI. Documentation explains runtime
+capability checks, caller-owned UTF-8 buffers, lifetimes and worker/UI use.
+
+Windows x64, MSVC 19.51, Ninja, Release. Commands in `.worktrees/folders-sdk`,
+with external compiler/Windows SDK tools and Python selected in the shell:
+
+```sh
+cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=<python>
+cmake --build build/native --config Release --parallel 4 --target forgeefx_block_validator host_services_tests host_services_fixture host_services_legacy_fixture example_gain example_delay
+ctest --test-dir build/native -C Release --output-on-failure -R "^(sdk_host_services.*|package_example_gain|package_example_delay)$"
+cmake -S sdk -B build/standalone-sdk -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/standalone-sdk --config Release --parallel 4
+ctest --test-dir build/standalone-sdk -C Release --output-on-failure -R "^sdk_host_services.*$"
+git diff --check
+```
+
+Root focused checks passed **6/6**. Independent SDK checks passed **4/4**.
+Tests load actual current/legacy DLL fixtures, preserve the legacy entry point,
+query without an editor, check absent binding, null/short/incompatible tables,
+missing callbacks, invalid arguments, exact/small buffers, UTF-8 byte counts,
+live folder edits and host error propagation. Validators accept both fixture
+generations and representative gain/default-editor and delay/custom-editor
+packages. Generated example identities and host bounds remain unchanged.
+
+Extracted the guide's complete C folder-copy example into an ignored build file;
+`cl /c /std:c11 /I sdk/include` compiled it successfully. Shared extension files
+match the companion Blocks project; its customized generator was not replaced.
+The first CTest command resolved a Python wrapper without its package path;
+calling the CTest executable beside CMake corrected the environment. Diff check
+passed. No generated package files, dependencies or local tool paths were committed.
+
+### Listening, Windows host, macOS host and DAW checks
+
+Not run in this SDK change. Synthetic validator paths do not establish real
+folder selection, model loading or audio quality. Host integration is validated
+in the host repository. No DSP, model or IR loader was added or changed here.
+
 ## Standard analog voltage support - 7 October 2026
 
 ### Automated checks

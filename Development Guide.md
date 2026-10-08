@@ -110,8 +110,8 @@ include("${FORGEEFX_SDK_DIR}/cmake/ForgeEFXBlock.cmake")
 forgeefx_add_block(my_effect "${CMAKE_CURRENT_SOURCE_DIR}" DEVELOPER yourcompany)
 ```
 
-The helper compiles `dsp.c`, its generated descriptor, and optional `ui.c` with
-the rendering bridge. It does not glob other implementation files. Add extra C
+The helper compiles `dsp.c`, its generated descriptor, the host-services bridge,
+and optional `ui.c` with the rendering bridge. It does not glob other implementation files. Add extra C
 sources explicitly with `target_sources(my_effect PRIVATE helper.c)`; enable CXX
 in `project()` and preserve C linkage if adding C++ implementations. Use
 `INCLUDE_DIRECTORIES` for shared headers and `OUTPUT_DIRECTORY` to override the
@@ -146,8 +146,9 @@ void gain_reset(int *state);
   cross the C ABI. The host owns routing and sample-rate conversion.
 
 `state_alignment` is 4 or 8 bytes in ABI v1 (default 8). Do not require stronger
-alignment or assume packed structs. The SDK does not expose file/model services
-or general custom-state serialization. Keep ABI layouts and calling conventions
+alignment or assume packed structs. The optional host-services extension exposes
+content folder paths, but does not load files/models or serialize custom state.
+Keep ABI layouts and calling conventions
 unchanged when adding your own effect.
 
 ### Analog circuit voltage convention
@@ -193,6 +194,73 @@ same source metadata. Never hand-edit either generated file. Reconfigure/rebuild
 after editing the source manifest. Keep package and binary together.
 
 Host-version compatibility, SDK ABI version, and package version are separate.
+
+### Read the host's NAM and IR folders
+
+The host's **Settings > Folders** popup sets Blocks, Presets, NAM and IR folders.
+Blocks can query the current NAM and IR paths through
+`sdk/include/forgeefx_host_services.h`. Blocks and Presets are host-owned settings
+and are not exposed by this extension. Do not read the host's preferences file,
+hard-code a user directory, or borrow drawing-service pointers to find folders.
+
+`forgeefx_add_block` includes the bridge in every module, including blocks without
+custom editors. A supporting host calls the optional exported
+`forgeefx_set_host_services` once after validating the descriptor and before
+calling the block. Existing block and drawing ABI v1 layouts are unchanged.
+Older modules can omit this export. Older hosts omit the binding call; the SDK
+helper then returns `FORGEEFX_HOST_UNAVAILABLE`.
+
+For example, this C function copies either folder into memory owned by the block.
+Call it only from a UI or worker thread, then `free` the result in the same module:
+
+```c
+#include "forgeefx_host_services.h"
+#include <stdlib.h>
+
+char *copy_host_folder(uint32_t kind)
+{
+    uint32_t required = 0;
+    int32_t status = forgeefx_host_get_folder(kind, NULL, 0, &required);
+    for (int attempt = 0; attempt < 3; ++attempt) {
+        if (status != FORGEEFX_HOST_BUFFER_TOO_SMALL || required == 0)
+            return NULL;
+        uint32_t capacity = required;
+        char *path = (char *)malloc(capacity);
+        if (!path) return NULL;
+        status = forgeefx_host_get_folder(kind, path, capacity, &required);
+        if (status == FORGEEFX_HOST_OK) return path;
+        free(path);
+        /* A concurrent folder change can require a larger buffer. */
+    }
+    return NULL;
+}
+```
+
+Pass `FORGEEFX_FOLDER_NAM` or `FORGEEFX_FOLDER_IR`. Each successful query returns
+the current absolute UTF-8 path, even when no editor is open. `required` counts
+bytes including the terminating NUL. A size query or insufficient buffer returns
+`FORGEEFX_HOST_BUFFER_TOO_SMALL`; no truncated path is returned. Other statuses
+are `FORGEEFX_HOST_UNAVAILABLE`, `FORGEEFX_HOST_INVALID_ARGUMENT` and
+`FORGEEFX_HOST_ERROR`. On errors the byte count is zero except for an insufficient
+buffer, and a supplied nonempty buffer is emptied. The byte-count pointer is
+mandatory. A null buffer is valid only with capacity zero.
+
+Query again when refreshing your browser or beginning content selection. Paths
+are snapshots, and a user can change preferences between size and copy queries.
+Handle missing or unreadable directories as normal application errors. Changing
+the folder does not require unloading an already prepared model or IR. UTF-8
+paths need conversion to wide characters before using Windows wide file APIs.
+
+**Never query folders, allocate, access files, or prepare/destroy models from
+process/reset callbacks.** Prepare content on a worker thread and use a safe
+handoff suitable for your block. This extension provides paths only; it does not
+provide a model loader, IR loader, file dialogs or custom-state persistence.
+
+Always handle unavailable services at runtime. If your block cannot work without
+this capability, show a useful unavailable state and set `minimum_host_version`
+to the first supporting host release once that release has an assigned version.
+Do not assume every historical build with the same host version supports it.
+The extension's service ABI version is independent of the host release version.
 
 ## 7. Add an optional editor
 
@@ -247,7 +315,10 @@ macOS single-config builds, use:
 Replace placeholder IDs and platform directories with your actual output. The
 validator checks ABI negotiation, descriptor metadata, state independence,
 deterministic reset, parameter extremes and optional rendering calls. It executes
-native module code and is not a sandbox or an audio-quality test.
+native module code and is not a sandbox or an audio-quality test. It binds the
+optional host-services extension with synthetic NAM/IR paths, without creating
+directories or loading files. Test real folder selection and content loading in
+the host separately.
 
 Test silence, clipping/headroom, rapid parameter changes, repeated reset,
 multiple instances, mono/stereo behavior, and any tails. Then test loading,
