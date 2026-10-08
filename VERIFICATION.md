@@ -23,6 +23,9 @@ git diff --check
 ```
 
 Root focused checks passed **6/6**. Independent SDK checks passed **4/4**.
+The coordinator merged the branch in a separate integration worktree, repeated
+the six focused checks successfully, fast-forwarded `main`, and rebuilt the
+validator, extension fixtures, and all four example packages there.
 Tests load actual current/legacy DLL fixtures, preserve the legacy entry point,
 query without an editor, check absent binding, null/short/incompatible tables,
 missing callbacks, invalid arguments, exact/small buffers, UTF-8 byte counts,
