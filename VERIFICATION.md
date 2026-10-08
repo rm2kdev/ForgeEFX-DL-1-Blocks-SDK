@@ -1,5 +1,27 @@
 # Verification
 
+## Optional prepared model extension - 8 October 2026
+
+Ownership: `sdk/include/forgeefx_model.h`, SDK/reference documentation and this
+verification record. Block/render ABI v1 and the folder-service table are unchanged.
+The header matches the Blocks SDK and pinned host copy byte-for-byte.
+
+### Automated checks
+
+Configured the isolated `.worktrees/move-nam-coordinator/build/native` with
+MSVC x64 Release. Built the validator and current/legacy host-service fixtures.
+All four `^sdk_host_services.*$` CTests passed. Compiled the new header as C
+with `cl /Zs /TC /I sdk/include /FIforgeefx_model.h sdk/tests/HostServicesFixture.c`.
+The Blocks project compiles it as C++, loads both real NAM package exports and
+tests version negotiation, prepared instance lifetime and inference; the host
+checks malformed tables and compatibility with modules omitting the extension.
+
+### Listening and platform checks
+
+Not run. This SDK change adds an optional header/documented contract; no Windows
+GUI, Mac, DAW or hardware session is claimed.
+
+
 ## Host content folder extension - 8 October 2026
 
 ### Automated checks

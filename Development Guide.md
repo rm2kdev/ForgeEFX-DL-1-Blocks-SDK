@@ -351,3 +351,25 @@ restart the host. A missing block commonly means an unscanned directory, a neste
 or incomplete package, an architecture mismatch, an incompatible host range,
 or a duplicate ID. Verify those against the actual generated metadata and host
 configuration before changing DSP code.
+
+
+## Prepared model extension (host 0.1.1+)
+
+`sdk/include/forgeefx_model.h` defines the optional `forgeefx_get_model_api` export.
+It leaves block/render ABI v1 unchanged. A module returns an immutable versioned
+table or null for an unsupported version. The host validates its version, size
+and all callbacks. Modules without the export retain their existing ABI behavior.
+
+`prepare` receives an absolute UTF-8 filename and a caller-owned error buffer on
+a worker. It returns an opaque, module-owned instance with two independent
+48 kHz channel histories, or null with a terminated error. `destroy` runs on the
+worker after audio retires the instance. `process` receives normalized float
+audio, channel 0/1 and the block parameters. It must not allocate, load files,
+block or throw. Neither allocation ownership nor C++ objects cross the boundary.
+The host retains the module/table until all instances and callbacks are finished.
+
+The current host uses this extension for the two official NAM IDs, preserving
+their existing browser and saved model paths. It is not a general custom-state
+serialization or third-party file-picker API. Set `minimum_host_version` to
+0.1.1 or later for a package requiring it. Older hosts must reject such packages.
+The folder-service extension remains separate and does not load models.

@@ -105,3 +105,6 @@ the export's scope and source provenance.
 For a custom editor with a live waveform, gain feedback, and host-managed
 responsive controls, see [the responsive UI demo](examples/responsive_ui/README.md).
 It is included in the root build alongside the gain and delay examples.
+
+The optional [prepared model extension](sdk/include/forgeefx_model.h) supports
+NAM packages in host 0.1.1+, without changing block/render ABI v1.
