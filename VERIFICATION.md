@@ -16,6 +16,13 @@ The Blocks project compiles it as C++, loads both real NAM package exports and
 tests version negotiation, prepared instance lifetime and inference; the host
 checks malformed tables and compatibility with modules omitting the extension.
 
+### Main checkout
+
+Fast-forwarded main and repeated the C header syntax check. All three main
+checkouts contain the identical extension header (SHA-256
+`9d95f250c7b44d757b1d1cea9dd5d5c04699690869bc49536169b21609e5d76b`).
+No push or publication was performed.
+
 ### Listening and platform checks
 
 Not run. This SDK change adds an optional header/documented contract; no Windows
